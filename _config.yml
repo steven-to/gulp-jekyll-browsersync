@@ -1,0 +1,7 @@
+# Description
+name: Helloo
+description: none
+
+# Build settings
+baseurl: "/gulp+jekyll"
+highlighter: pygments
