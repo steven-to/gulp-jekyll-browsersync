@@ -30,14 +30,14 @@ gulp.task('sass', function(){
         .pipe(gulp.dest('css/'))
 });
 
-// Watch changes for the files and execute compilations
+// Watch changes for the files and execute compilations and 'jekyll-rebuild'
 gulp.task('watch', function(){
 	gulp.watch('sass/*.sass', ['sass']);
 	gulp.watch('jade/*jade', ['jade']);
   gulp.watch(['_includes/*.html', 'css/*.css'], ['jekyll-rebuild']);
 });
 
-// Serve a local server with browserSync, notice that we also use 'jekyll' and 'sass' tasks
+// Serve a local server with browserSync, going with it is the 'jekyll-build' task
 gulp.task('serve', ['jekyll-build'], function() {
     browserSync.init({
         server: "_site/"
