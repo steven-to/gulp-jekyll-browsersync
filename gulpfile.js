@@ -1,53 +1,49 @@
 var gulp = require('gulp'),
 		jade = require('gulp-jade'),
 		sass = require('gulp-ruby-sass'),
-		uglify = require('gulp-uglify'),
 		browserSync = require('browser-sync').create(),
-		cp = require('child_process');
+    cp = require('child_process');
+
+// Build Jekyll site
+gulp.task('jekyll-build', function (done){
+  return cp.spawn('jekyll.bat', ['build'], {stdio: 'inherit'})
+        .on('close', done);
+});
+
+// Rebuild Jekyll site
+gulp.task('jekyll-rebuild', ['jekyll-build'], function(){
+  browserSync.reload();
+});
 
 // Compile HTML files to Jade
 gulp.task('jade', function(){
 	return gulp.src('jade/*.jade')
-				.pipe(jade({
-					pretty: true
-				}))
-				.pipe(gulp.dest(''))
+    		.pipe(jade({ pretty: true }))
+    		.pipe(gulp.dest('_includes/'))
 });
 
 // Compile SASS files to CSS
 gulp.task('sass', function(){
 	return sass('sass/*.sass', {sourcemap: true})
-				.pipe(gulp.dest('css/'))
+				.pipe(gulp.dest('_site/css'))
 				.pipe(browserSync.stream()) // We can use this to inject changed files to browserSync
-});
-
-// Compress JavaScript files into the 'min' folder
-gulp.task('compress', function(){
-	return gulp.src('js/*.js')
-				.pipe(uglify())
-				.pipe(gulp.dest('js/min/')) 
+        .pipe(gulp.dest('css/'))
 });
 
 // Watch changes for the files and execute compilations
 gulp.task('watch', function(){
 	gulp.watch('sass/*.sass', ['sass']);
 	gulp.watch('jade/*jade', ['jade']);
-	gulp.watch('js/*js', ['compress']);
-});
-
-// Build Jekyll site
-gulp.task('jekyll', function (done){
-		cp.exec('jekyll', ['build'], {stdio: 'inherit'}).on('close', done);
+  gulp.watch(['_includes/*.html', 'css/*.css'], ['jekyll-rebuild']);
 });
 
 // Serve a local server with browserSync, notice that we also use 'jekyll' and 'sass' tasks
-gulp.task('serve', ['sass', 'jekyll'], function() {
+gulp.task('serve', ['jekyll-build'], function() {
     browserSync.init({
-        server: ""
+        server: "_site/"
     });
-    gulp.watch("index.html").on('change', browserSync.reload);
 });
 
 // This is the default task, just type 'gulp' on your favorite command line
 // tool and the site will be built. 
-gulp.task('default', ['watch', 'serve']);
+gulp.task('default', ['serve', 'watch']);

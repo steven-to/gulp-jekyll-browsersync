@@ -3,5 +3,6 @@ name: Helloo
 description: none
 
 # Build settings
-baseurl: "/gulp+jekyll"
+baseurl: "/gulp-jekyll-browsersync"
 highlighter: pygments
+exclude: ['node_modules']
